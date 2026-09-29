@@ -12,7 +12,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
@@ -26,6 +26,7 @@
   --line:#D6DFE4; --accent:#0E6B72; --focus:#B4531A;
   --font-body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
   --font-display:"Newsreader",Georgia,serif;
+  --font-num:"Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
   --radius:10px;
   color-scheme:light;
 }
@@ -37,11 +38,13 @@
   }
 }
 
-html{font-size:112.5%}                 /* 18px base */
-html[data-size="l"]{font-size:125%}
-html[data-size="xl"]{font-size:143.75%}
+html{font-size:112.5%}                 /* 18px base. Browser zoom, phone
+  "display size" and Chrome's own font-size setting all scale this normally —
+  nothing else on this page needs to. */
 
 *,*::before,*::after{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{overflow-wrap:anywhere}
 body{margin:0;background:var(--paper);color:var(--ink);
   font-family:var(--font-body);line-height:1.6;-webkit-text-size-adjust:100%}
 img{max-width:100%;height:auto;display:block}
@@ -53,26 +56,21 @@ a{color:var(--accent);text-underline-offset:3px}
 
 /* ---------- Header ---------- */
 header{border-bottom:1px solid var(--line)}
-header .wrap{display:flex;align-items:center;gap:1rem;min-height:4.5rem}
+/* The header wraps onto a second row by itself whenever it doesn't fit —
+   at any screen width AND at any zoom or text-size level — instead of
+   relying on a fixed breakpoint that only knows about screen width. */
+header .wrap{display:flex;flex-wrap:wrap;align-items:center;column-gap:1rem;row-gap:.4rem;padding-block:.65rem}
 .brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--ink);margin-right:auto}
 .brand svg{width:2.2rem;height:2.2rem;color:var(--accent);flex:none}
 .brand b{font-family:var(--font-display);font-weight:500;font-size:1.1rem;display:block;line-height:1.15}
 .brand em{font-style:normal;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
-nav{display:flex;gap:.15rem}
-nav a{padding:.6rem .7rem;text-decoration:none;color:var(--ink-soft);font-size:.95rem;border-radius:var(--radius)}
+nav{display:flex;flex-wrap:wrap;gap:.15rem}
+nav a{padding:.6rem .7rem;text-decoration:none;color:var(--ink-soft);font-size:.95rem;border-radius:var(--radius);white-space:nowrap}
 nav a:hover{color:var(--accent);background:var(--surface)}
 nav a[aria-current="page"]{color:var(--accent);font-weight:700}
-@media(max-width:44rem){
-  header .wrap{flex-wrap:wrap;min-height:0;padding-block:.5rem}
-  nav{order:3;width:100%;border-top:1px solid var(--line);padding-top:.25rem;justify-content:space-between}
-  nav a{padding:.75rem .4rem;font-size:1rem}
-}
-#sizeBtn{min-height:2.75rem;min-width:2.75rem;padding:0 .7rem;border:1px solid var(--line);
-  background:var(--surface);color:var(--ink);border-radius:var(--radius);font:inherit;font-size:.85rem;cursor:pointer}
-#sizeBtn:hover{border-color:var(--accent)}
 
 /* ---------- Home hero ---------- */
-.hero{padding:clamp(3rem,10vw,6rem) 0 clamp(3.5rem,10vw,6rem)}
+.hero{padding-block:clamp(3rem,10vw,6rem) clamp(3.5rem,10vw,6rem)}
 .hero .wrap{display:grid;gap:clamp(1.5rem,5vw,3rem);align-items:center}
 @media(min-width:48rem){.hero .wrap{grid-template-columns:1.2fr .8fr}}
 .hero h1{margin:0}
@@ -92,7 +90,7 @@ h1{font-family:var(--font-display);font-weight:500;font-size:clamp(2.2rem,7vw,3.
 @media (prefers-reduced-motion:reduce){.btn{transition:none}}
 
 /* ---------- Sub-page layout ---------- */
-.page{padding:clamp(2.25rem,6vw,3.5rem) 0 clamp(3rem,8vw,4.5rem)}
+.page{padding-block:clamp(2.25rem,6vw,3.5rem) clamp(3rem,8vw,4.5rem)}
 .page h1{margin:0 0 .5rem;font-size:clamp(1.9rem,5.5vw,2.7rem)}
 .page-intro{color:var(--ink-soft);font-size:1.05rem;max-width:50ch;margin:0 0 2.5rem}
 .page p,.page li{max-width:64ch}
@@ -115,6 +113,9 @@ h3{font-size:1.02rem;font-weight:700;margin:0 0 .5rem}
 .rows li:last-child{border-bottom:0}
 @media(min-width:34rem){.rows li{grid-template-columns:8.5rem 1fr;gap:1rem;align-items:baseline}}
 .rows b{font-weight:400;color:var(--ink-soft);font-size:.9rem}
+/* Contact values (phone, fax, address, email) use Source Sans 3, which has a
+   plain zero instead of Atkinson's slashed one. Labels stay in Atkinson. */
+.rows li > span,.rows li > a,.tel{font-family:var(--font-num)}
 .tel{font-weight:700;white-space:nowrap}
 
 /* Link lists — resources */
@@ -135,13 +136,12 @@ footer p{margin:0}
 footer a{color:var(--ink-soft)}
 
 @media print{
-  header nav,#sizeBtn,.btn,.portrait{display:none}
+  header nav,.btn,.portrait{display:none}
   body{background:#fff;color:#000;font-size:11pt}
   a{color:#000;text-decoration:none}
   .card{border:1px solid #999;break-inside:avoid}
 }
 </style>
-<script>try{var s=localStorage.getItem('size');if(s)document.documentElement.setAttribute('data-size',s)}catch(e){}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -163,7 +163,6 @@ footer a{color:var(--ink-soft)}
       <a href="contacts.html">Contacts</a>
       <a href="resources.html">Resources</a>
     </nav>
-    <button id="sizeBtn" aria-pressed="false" aria-label="Text size: normal. Press to change.">A<sup>+</sup></button>
   </div>
 </header>
 
@@ -205,7 +204,7 @@ footer a{color:var(--ink-soft)}
         <h3>Botulinum Toxin Injection</h3>
         <ul>
           <li>Migarine</li>
-          <li>Cervical dystonia, Hemifacial spasm, Blepharospasm
+          <li>Cervical dystonia, Hemifacial spasm, Blepharospasm</li>
           <li>Spasticity</li>
           <li>Hyperhidrosis</li>
         </ul>
@@ -219,25 +218,9 @@ footer a{color:var(--ink-soft)}
 
 <footer>
   <div class="wrap">
-    <p> &middot; <a href="privacy.html">Privacy</a></p>
+    <p><a href="privacy.html">Privacy</a></p>
   </div>
 </footer>
 
-<script>
-// Text size: normal (18px) -> large (20px) -> extra large (23px). Remembered per device.
-(function(){
-  var root=document.documentElement, btn=document.getElementById('sizeBtn'),
-      steps=['','l','xl'], names=['normal','large','extra large'], i=0, store=null;
-  try{ store=localStorage; var s=store.getItem('size'); if(s!==null){var j=steps.indexOf(s); if(j>-1)i=j;} }catch(e){}
-  function apply(){
-    if(steps[i]) root.setAttribute('data-size',steps[i]); else root.removeAttribute('data-size');
-    btn.setAttribute('aria-pressed', i>0?'true':'false');
-    btn.setAttribute('aria-label','Text size: '+names[i]+'. Press to change.');
-    try{ store.setItem('size',steps[i]); }catch(e){}
-  }
-  apply();
-  btn.addEventListener('click',function(){ i=(i+1)%steps.length; apply(); });
-})();
-</script>
 </body>
 </html>
